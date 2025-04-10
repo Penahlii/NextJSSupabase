@@ -26,10 +26,7 @@ export async function DELETE(
   });
 }
 
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: Request, { params }: { params: { id: any } }) {
   const supabase = await createClient();
   const id = params.id;
 
