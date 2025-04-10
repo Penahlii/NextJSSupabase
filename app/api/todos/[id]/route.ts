@@ -33,19 +33,21 @@ export async function GET(
   const supabase = await createClient();
   const id = params.id;
 
-  if (!id) {
+  if (!id)
     return new Response(JSON.stringify({ error: "ID is required" }), {
       status: 400,
     });
-  }
 
-  const { data, error } = await supabase.from("todo").select("*").eq("id", id);
+  const { data, error } = await supabase
+    .from("todos")
+    .select("*")
+    .eq("id", id)
+    .single();
 
-  if (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
+  if (error)
+    return new Response(JSON.stringify({ error: "Todo not found" }), {
+      status: 404,
     });
-  }
 
   return new Response(JSON.stringify(data), {
     headers: { "Content-Type": "application/json" },
