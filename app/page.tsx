@@ -1,6 +1,5 @@
-export default async function Home() {
-  return (
-    <>
-    </>
-  );
+import TodoListClient from "@/components/todo/TodoListClient";
+
+export default function Home() {
+  return <TodoListClient />;
 }

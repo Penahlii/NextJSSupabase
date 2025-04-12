@@ -5,7 +5,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   const supabase = await createClient();
-  const id = params.id;
+  const { id } = await params;
 
   if (!id) {
     return new Response(JSON.stringify({ error: "ID is required" }), {
@@ -26,20 +26,19 @@ export async function DELETE(
   });
 }
 
-export async function GET(req: Request, { params }: { params: { id: any } }) {
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   const supabase = await createClient();
-  const id = params.id;
+  const { id } = await params;
 
   if (!id)
     return new Response(JSON.stringify({ error: "ID is required" }), {
       status: 400,
     });
 
-  const { data, error } = await supabase
-    .from("todos")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const { data, error } = await supabase.from("todo").select("*").eq("id", id);
 
   if (error)
     return new Response(JSON.stringify({ error: "Todo not found" }), {
@@ -48,5 +47,34 @@ export async function GET(req: Request, { params }: { params: { id: any } }) {
 
   return new Response(JSON.stringify(data), {
     headers: { "Content-Type": "application/json" },
+  });
+}
+
+export async function PUT(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  const supabase = await createClient();
+  const body = await req.json();
+  const { id } = await params;
+  const { title, description, completed } = body;
+
+  if (!id)
+    return new Response(JSON.stringify({ error: "ID is required" }), {
+      status: 400,
+    });
+
+  const { data, error } = await supabase
+    .from("todo")
+    .update({ title, description, completed })
+    .eq("id", id);
+
+  if (error)
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+    });
+
+  return new Response(JSON.stringify(data), {
+    headers: { "Content-type": "application/json" },
   });
 }
